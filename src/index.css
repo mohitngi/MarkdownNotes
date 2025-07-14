@@ -1,0 +1,263 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 220 65% 18%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 220 65% 18%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 220 65% 18%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 220 65% 18%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 217.2 91.2% 59.8%;
+    
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-500;
+  }
+
+  /* Focus styles */
+  .focus-visible {
+    @apply outline-none ring-2 ring-primary ring-offset-2 ring-offset-background;
+  }
+
+  /* Text selection */
+  ::selection {
+    @apply bg-primary/20 text-primary-foreground;
+  }
+
+  /* Smooth animations */
+  * {
+    @apply transition-colors duration-200;
+  }
+
+  /* Code highlighting */
+  .hljs {
+    @apply bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200;
+  }
+
+  /* Markdown preview styles */
+  .markdown-preview {
+    @apply prose prose-slate dark:prose-invert max-w-none;
+  }
+
+  .markdown-preview h1 {
+    @apply text-3xl font-bold mt-8 mb-6 text-slate-900 dark:text-slate-100 border-b border-slate-200 dark:border-slate-700 pb-3;
+  }
+
+  .markdown-preview h2 {
+    @apply text-2xl font-semibold mt-8 mb-4 text-slate-800 dark:text-slate-200;
+  }
+
+  .markdown-preview h3 {
+    @apply text-xl font-semibold mt-6 mb-3 text-slate-800 dark:text-slate-200;
+  }
+
+  .markdown-preview p {
+    @apply mb-4 text-slate-700 dark:text-slate-300 leading-relaxed;
+  }
+
+  .markdown-preview ul, .markdown-preview ol {
+    @apply my-4 pl-6;
+  }
+
+  .markdown-preview li {
+    @apply mb-2 text-slate-700 dark:text-slate-300;
+  }
+
+  .markdown-preview blockquote {
+    @apply border-l-4 border-slate-300 dark:border-slate-600 pl-4 my-4 text-slate-600 dark:text-slate-400 italic;
+  }
+
+  .markdown-preview code {
+    @apply bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 px-2 py-1 rounded text-sm font-mono;
+  }
+
+  .markdown-preview pre {
+    @apply bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 p-4 rounded-lg my-4 overflow-x-auto;
+  }
+
+  .markdown-preview pre code {
+    @apply bg-transparent p-0;
+  }
+
+  .markdown-preview table {
+    @apply w-full border-collapse border border-slate-300 dark:border-slate-600 my-4;
+  }
+
+  .markdown-preview th, .markdown-preview td {
+    @apply border border-slate-300 dark:border-slate-600 p-2 text-left;
+  }
+
+  .markdown-preview th {
+    @apply bg-slate-100 dark:bg-slate-800 font-semibold;
+  }
+
+  /* Line numbers */
+  .line-numbers {
+    @apply text-slate-400 dark:text-slate-600 text-sm font-mono select-none;
+  }
+
+  /* Search highlighting */
+  mark {
+    @apply bg-yellow-200 dark:bg-yellow-800 px-1 rounded;
+  }
+
+  /* Loading states */
+  .loading {
+    @apply animate-pulse;
+  }
+
+  /* Utility classes */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
+
+/* Animation utilities */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.3s ease-out;
+}
+
+/* Focus management for accessibility */
+.focus-trap {
+  @apply outline-none;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --border: 0 0% 20%;
+    --ring: 0 0% 20%;
+  }
+
+  .dark {
+    --border: 0 0% 80%;
+    --ring: 0 0% 80%;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
