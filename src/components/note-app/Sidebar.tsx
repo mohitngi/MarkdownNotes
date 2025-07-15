@@ -319,7 +319,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       )}
                       onClick={() => onViewChange('editor')}
                     >
-                      <FileText className="mr-2 h-4 w-4" />
+                      <FileText className="mr2 h-4 w-4" />
                       Editor
                     </Button>
                   </TooltipTrigger>
