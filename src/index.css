@@ -261,3 +261,45 @@ All colors MUST be HSL.
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Fix cursor on textarea scrollbar for all browsers that support it */
+textarea::-webkit-scrollbar,
+textarea::-webkit-scrollbar-thumb,
+textarea::-webkit-scrollbar-track {
+  cursor: default !important;
+}
+
+/* For Firefox */
+textarea {
+  scrollbar-color: auto;
+}
+
+/* Make all vertical scrollbar thumbs taller and change color on hover */
+*::-webkit-scrollbar-thumb:vertical {
+  min-height: 150px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* Tailwind slate-400 */
+}
+
+/* Custom scrollbar for preview area */
+.preview-scrollbar::-webkit-scrollbar {
+  width: 12px;
+}
+.preview-scrollbar::-webkit-scrollbar-thumb:vertical {
+  min-height: 200px;
+  background: #cbd5e1; /* Tailwind slate-300 */
+}
+.preview-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* Tailwind slate-400 */
+}
+
+/* TEST: Make preview scrollbar thumb turn red on hover for debugging */
+.preview-scrollbar::-webkit-scrollbar-thumb:hover,
+.preview-scrollbar > div::-webkit-scrollbar-thumb:hover {
+  background: red !important;
+}
+
+html.dark, body.dark {
+  background: #111827 !important; /* Tailwind gray-900 */
+}

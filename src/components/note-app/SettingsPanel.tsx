@@ -74,6 +74,18 @@ export const SettingsPanel: React.FC = () => {
     reader.readAsText(file);
   };
 
+  const handleThemeChange = (theme: 'light' | 'dark' | 'system') => {
+    updateSettings({ theme });
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    if (theme === 'system') {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.classList.add(isDark ? 'dark' : 'light');
+    } else {
+      root.classList.add(theme);
+    }
+  };
+
   return (
     <div className="flex-1 bg-white dark:bg-slate-900 overflow-auto">
       <div className="max-w-4xl mx-auto p-6">
@@ -107,7 +119,7 @@ export const SettingsPanel: React.FC = () => {
                 </div>
                 <Select
                   value={settings.theme}
-                  onValueChange={(value: any) => updateSettings({ theme: value })}
+                  onValueChange={(value: any) => handleThemeChange(value)}
                 >
                   <SelectTrigger className="w-32">
                     <SelectValue />

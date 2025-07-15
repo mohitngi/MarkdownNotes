@@ -195,6 +195,18 @@ export const Editor: React.FC<EditorProps> = ({
     }
   };
 
+  const handleThemeChange = (theme: 'light' | 'dark' | 'system') => {
+    updateSettings({ theme });
+    const root = window.document.documentElement;
+    root.classList.remove('light', 'dark');
+    if (theme === 'system') {
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      root.classList.add(isDark ? 'dark' : 'light');
+    } else {
+      root.classList.add(theme);
+    }
+  };
+
   if (!note) {
     return (
       <div className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-900">
@@ -210,6 +222,14 @@ export const Editor: React.FC<EditorProps> = ({
       </div>
     );
   }
+
+  const themeModes = [
+    { mode: 'light', label: 'Light mode', icon: Sun },
+    { mode: 'dark', label: 'Dark mode', icon: Moon },
+    { mode: 'system', label: 'System (auto)', icon: Monitor },
+  ];
+
+  const [hovered, setHovered] = useState<string | null>(null);
 
   return (
     <TooltipProvider>
@@ -231,22 +251,22 @@ export const Editor: React.FC<EditorProps> = ({
           )}
           <div className="flex items-center gap-1 ml-2">
             <button
-              className={cn('p-1 rounded-full', settings.theme === 'light' ? 'bg-slate-200 dark:bg-slate-700' : 'hover:bg-slate-100 dark:hover:bg-slate-800')}
-              onClick={() => updateSettings({ theme: 'light' })}
+              className={cn('p-1 rounded-full', settings.theme === 'light' ? 'bg-slate-200 dark:bg-slate-700' : 'hover:bg-slate-200 dark:hover:bg-slate-800')}
+              onClick={() => handleThemeChange('light')}
               aria-label="Light theme"
             >
               <Sun className={cn('h-4 w-4', settings.theme === 'light' ? 'text-yellow-500' : 'text-slate-500')} />
             </button>
             <button
-              className={cn('p-1 rounded-full', settings.theme === 'dark' ? 'bg-slate-200 dark:bg-slate-700' : 'hover:bg-slate-100 dark:hover:bg-slate-800')}
-              onClick={() => updateSettings({ theme: 'dark' })}
+              className={cn('p-1 rounded-full', settings.theme === 'dark' ? 'bg-slate-200 dark:bg-slate-700' : 'hover:bg-slate-200 dark:hover:bg-slate-800')}
+              onClick={() => handleThemeChange('dark')}
               aria-label="Dark theme"
             >
               <Moon className={cn('h-4 w-4', settings.theme === 'dark' ? 'text-blue-500' : 'text-slate-500')} />
             </button>
             <button
-              className={cn('p-1 rounded-full', settings.theme === 'system' ? 'bg-slate-200 dark:bg-slate-700' : 'hover:bg-slate-100 dark:hover:bg-slate-800')}
-              onClick={() => updateSettings({ theme: 'system' })}
+              className={cn('p-1 rounded-full', settings.theme === 'system' ? 'bg-slate-200 dark:bg-slate-700' : 'hover:bg-slate-200 dark:hover:bg-slate-800')}
+              onClick={() => handleThemeChange('system')}
               aria-label="System theme"
             >
               <Monitor className={cn('h-4 w-4', settings.theme === 'system' ? 'text-green-500' : 'text-slate-500')} />
@@ -422,91 +442,96 @@ export const Editor: React.FC<EditorProps> = ({
             </div>
           </div>
           
+          {/* Add space below toolbar, above tags */}
+          <div className="mt-4" />
+
           {/* Tags */}
-          <div className="mt-4 border border-slate-100 dark:border-slate-800 rounded-lg p-3 bg-slate-50 dark:bg-slate-900">
-            <div className="flex items-center gap-2 mb-2">
-              <Tag className="h-4 w-4 text-slate-500" />
-              <span className="text-sm text-slate-600 dark:text-slate-400">Tags</span>
-            </div>
-            <div className="flex flex-wrap gap-2 mb-2">
-              {tags.map(tag => (
-                <Tooltip key={tag}>
+          {/* Editor Content */}
+          <div className="flex-1 flex flex-col min-h-0 overflow-hidden bg-gray-50 dark:bg-gray-900 rounded-lg p-2">
+            {/* Tags (no border/bg/rounding) */}
+            <div className="mb-2">
+              <div className="flex items-center gap-2 mb-2">
+                <Tag className="h-4 w-4 text-slate-500" />
+                <span className="text-sm text-slate-600 dark:text-slate-400">Tags</span>
+              </div>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {tags.map(tag => (
+                  <Tooltip key={tag}>
+                    <TooltipTrigger asChild>
+                      <Badge
+                        variant="secondary"
+                        className="cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 text-xs px-2 py-1"
+                        onClick={() => handleRemoveTag(tag)}
+                      >
+                        #{tag} ×
+                      </Badge>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Click to remove tag</p>
+                    </TooltipContent>
+                  </Tooltip>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <Input
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  placeholder="Add tag..."
+                  className="flex-1 min-w-0"
+                  onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+                />
+                <Tooltip>
                   <TooltipTrigger asChild>
-                    <Badge
-                      variant="secondary"
-                      className="cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 text-xs px-2 py-1"
-                      onClick={() => handleRemoveTag(tag)}
-                    >
-                      #{tag} ×
-                    </Badge>
+                    <Button onClick={handleAddTag} size="sm" className="ml-2">Add</Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Click to remove tag</p>
+                    <p>Add new tag</p>
                   </TooltipContent>
                 </Tooltip>
-              ))}
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Input
-                value={newTag}
-                onChange={(e) => setNewTag(e.target.value)}
-                placeholder="Add tag..."
-                className="flex-1 min-w-0"
-                onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
-              />
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button onClick={handleAddTag} size="sm" className="ml-2">Add</Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Add new tag</p>
-                </TooltipContent>
-              </Tooltip>
+            {/* Editor/Preview Area */}
+            <div className="flex-1 flex min-h-0">
+              {/* Edit View */}
+              {(viewMode === 'edit' || viewMode === 'split') && (
+                <div className={cn(
+                  "flex flex-col overflow-hidden",
+                  viewMode === 'split' ? "w-1/2 border-r border-slate-200 dark:border-slate-700" : "w-full"
+                )}>
+                  <ScrollArea className="flex-1 min-h-0 h-full">
+                    <Textarea
+                      ref={textareaRef}
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      placeholder="Start writing your note..."
+                      className="min-h-[calc(100vh-300px)] w-full resize-none border-none rounded-none focus-visible:outline-none font-mono text-sm leading-relaxed p-6 bg-transparent"
+                      onKeyPress={handleKeyPress}
+                      style={{
+                        fontSize: `${settings.fontSize}px`,
+                        lineHeight: settings.lineHeight,
+                        fontFamily: settings.fontFamily === 'mono' ? 'ui-monospace, monospace' : 'ui-sans-serif, sans-serif'
+                      }}
+                    />
+                  </ScrollArea>
+                </div>
+              )}
+              {/* Preview View */}
+              {(viewMode === 'preview' || viewMode === 'split') && (
+                <div className={cn(
+                  "flex flex-col overflow-hidden",
+                  viewMode === 'split' ? "w-1/2" : "w-full"
+                )}>
+                  <ScrollArea className="flex-1 preview-scrollbar">
+                    <MarkdownPreview
+                      content={content}
+                      className="p-6 bg-transparent"
+                    />
+                  </ScrollArea>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        
-        {/* Editor Content */}
-        <div className="flex-1 flex min-h-0 overflow-hidden bg-slate-50 dark:bg-slate-900 rounded-lg mt-4 p-2">
-          {/* Edit View */}
-          {(viewMode === 'edit' || viewMode === 'split') && (
-            <div className={cn(
-              "flex flex-col overflow-hidden",
-              viewMode === 'split' ? "w-1/2 border-r border-slate-200 dark:border-slate-700" : "w-full"
-            )}>
-              <ScrollArea className="flex-1">
-                <Textarea
-                  ref={textareaRef}
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Start writing your note..."
-                  className="min-h-[calc(100vh-300px)] resize-none border-none rounded-none focus-visible:ring-0 font-mono text-sm leading-relaxed p-6"
-                  onKeyPress={handleKeyPress}
-                  style={{
-                    fontSize: `${settings.fontSize}px`,
-                    lineHeight: settings.lineHeight,
-                    fontFamily: settings.fontFamily === 'mono' ? 'ui-monospace, monospace' : 'ui-sans-serif, sans-serif'
-                  }}
-                />
-              </ScrollArea>
-            </div>
-          )}
-          
-          {/* Preview View */}
-          {(viewMode === 'preview' || viewMode === 'split') && (
-            <div className={cn(
-              "flex flex-col overflow-hidden",
-              viewMode === 'split' ? "w-1/2" : "w-full"
-            )}>
-              <ScrollArea className="flex-1">
-                <MarkdownPreview
-                  content={content}
-                  className="p-6"
-                />
-              </ScrollArea>
-            </div>
-          )}
-      </div>
     </TooltipProvider>
   );
 };

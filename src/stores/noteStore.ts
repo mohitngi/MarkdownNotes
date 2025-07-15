@@ -43,7 +43,7 @@ interface NoteStore {
 }
 
 const defaultSettings: AppSettings = {
-  theme: 'system',
+  theme: 'light',
   editorMode: 'split',
   fontSize: 14,
   fontFamily: 'Inter',
@@ -372,10 +372,14 @@ Happy note-taking! 🚀`,
         }));
       },
 
-      updateSettings: (updates: Partial<AppSettings>) => {
-        set(state => ({
-          settings: { ...state.settings, ...updates }
-        }));
+      updateSettings: (updates) => {
+        set(state => {
+          const newSettings = { ...state.settings, ...updates };
+          if (updates.theme) {
+            localStorage.setItem('note-app-theme', updates.theme);
+          }
+          return { settings: newSettings };
+        });
       },
 
       searchNotes: (query: string) => {

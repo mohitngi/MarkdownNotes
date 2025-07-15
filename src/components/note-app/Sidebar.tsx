@@ -313,7 +313,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <TooltipTrigger asChild>
                     <Button
                       variant={activeView === 'editor' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
+                      className={cn(
+                        'w-full justify-start hover:bg-slate-200 dark:hover:bg-slate-700',
+                        activeView === 'editor' && 'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-blue-200'
+                      )}
                       onClick={() => onViewChange('editor')}
                     >
                       <FileText className="mr-2 h-4 w-4" />
@@ -326,7 +329,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <TooltipTrigger asChild>
                     <Button
                       variant={activeView === 'search' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
+                      className={cn(
+                        'w-full justify-start hover:bg-slate-200 dark:hover:bg-slate-700',
+                        activeView === 'search' && 'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-blue-200'
+                      )}
                       onClick={() => onViewChange('search')}
                     >
                       <Search className="mr-2 h-4 w-4" />
@@ -339,7 +345,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <TooltipTrigger asChild>
                     <Button
                       variant={activeView === 'settings' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
+                      className={cn(
+                        'w-full justify-start hover:bg-slate-200 dark:hover:bg-slate-700',
+                        activeView === 'settings' && 'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-blue-200'
+                      )}
                       onClick={() => onViewChange('settings')}
                     >
                       <Settings className="mr-2 h-4 w-4" />
@@ -352,7 +361,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <TooltipTrigger asChild>
                     <Button
                       variant={activeView === 'trash' ? 'secondary' : 'ghost'}
-                      className="w-full justify-start"
+                      className={cn(
+                        'w-full justify-start hover:bg-slate-200 dark:hover:bg-slate-700',
+                        activeView === 'trash' && 'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-blue-200'
+                      )}
                       onClick={() => onViewChange('trash')}
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
