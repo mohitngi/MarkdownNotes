@@ -2,9 +2,9 @@
 
 A Markdown based note-taking web app designed for a seamless user experience.
 
-## Features
+## Why MarkdownNotes?
 
-- **Elegant User Interface:** Clean, minimal, and professional design with seamless light, dark, and system theme switching.
+
 - **Markdown Editor & Preview:** Real-time split view, edit, and preview modes for efficient writing and reviewing.
 - **Tag Management:** Add, remove, and organize notes with tags for streamlined categorization.
 - **Customizable Editor:** Adjustable font size, line height, and font family for personalized writing comfort.
@@ -80,6 +80,3 @@ Contributions are welcome. To contribute:
 3. Push to your branch: `git push origin feature/your-feature`
 4. Open a pull request for review
 
----
-
-**MarkdownNotes** – Professional, efficient, and organized note-taking for everyone.
