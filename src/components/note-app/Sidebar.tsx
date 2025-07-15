@@ -15,7 +15,8 @@ import {
   Pencil,
   Palette,
   Undo2,
-  XCircle
+  XCircle,
+  Sun,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -66,9 +67,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [colorPickerNoteId, setColorPickerNoteId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
-
-  useEffect(() => { purgeTrashedNotes(); }, []);
-
   const filteredNotes = notes.filter(note =>
     note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     note.content.toLowerCase().includes(searchQuery.toLowerCase())
@@ -478,74 +476,74 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </div>
                 ) : (
                   <>
-                    {/* Favorites */}
-                    {favoriteNotes.length > 0 && (
-                      <div>
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Star className="h-4 w-4 text-yellow-500" />
-                          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                            Favorites
-                          </span>
-                        </div>
-                        <div className="space-y-1">
-                          {favoriteNotes.map(note => (
-                            <Tooltip key={note.id}>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant={currentNote?.id === note.id ? 'secondary' : 'ghost'}
-                                  className="w-full justify-start text-left h-auto py-2"
-                                  onClick={() => handleSelectNote(note)}
-                                >
-                                  <div className="flex-1 min-w-0">
-                                    <div className="truncate text-sm font-medium">
-                                      {note.title}
-                                    </div>
-                                    <div className="truncate text-xs text-slate-500">
-                                      {new Date(note.updatedAt).toLocaleDateString()}
-                                    </div>
-                                  </div>
-                                </Button>
-                              </TooltipTrigger>
-                            </Tooltip>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Folders */}
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                            <button
-                              onClick={() => setShowFolders(!showFolders)}
-                              className="flex items-center space-x-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
-                            >
-                              {showFolders ? (
-                                <ChevronDown className="h-4 w-4" />
-                              ) : (
-                                <ChevronRight className="h-4 w-4" />
-                              )}
-                              <Folder className="h-4 w-4" />
-                              <span>Folders</span>
-                            </button>
-
-                        <Tooltip>
+                {/* Favorites */}
+                {favoriteNotes.length > 0 && (
+                  <div>
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Star className="h-4 w-4 text-yellow-500" />
+                      <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                        Favorites
+                      </span>
+                    </div>
+                    <div className="space-y-1">
+                      {favoriteNotes.map(note => (
+                        <Tooltip key={note.id}>
                           <TooltipTrigger asChild>
                             <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={handleNewFolder}
+                              variant={currentNote?.id === note.id ? 'secondary' : 'ghost'}
+                              className="w-full justify-start text-left h-auto py-2"
+                              onClick={() => handleSelectNote(note)}
                             >
-                              <Plus className="h-3 w-3" />
+                              <div className="flex-1 min-w-0">
+                                <div className="truncate text-sm font-medium">
+                                  {note.title}
+                                </div>
+                                <div className="truncate text-xs text-slate-500">
+                                  {new Date(note.updatedAt).toLocaleDateString()}
+                                </div>
+                              </div>
                             </Button>
                           </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Create new folder</p>
-                          </TooltipContent>
                         </Tooltip>
-                      </div>
-                      
-                      {showFolders && (
-                        <div className="space-y-1">
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Folders */}
+                <div>
+                  <div className="flex items-center justify-between mb-2">
+                        <button
+                          onClick={() => setShowFolders(!showFolders)}
+                          className="flex items-center space-x-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
+                        >
+                          {showFolders ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                          <Folder className="h-4 w-4" />
+                          <span>Folders</span>
+                        </button>
+
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleNewFolder}
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Create new folder</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                  
+                  {showFolders && (
+                    <div className="space-y-1">
                           {folders.filter(folder => !folder.deletedAt).map(folder => {
                             const isOpen = openFolders[folder.id] ?? true;
                             return (
@@ -612,7 +610,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                               <TooltipContent>Edit</TooltipContent>
                                             </Tooltip>
                                             <Tooltip>
-                                              <TooltipTrigger asChild>
+                          <TooltipTrigger asChild>
                                                 <button
                                                   className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900 text-red-500 hover:text-red-700 transition"
                                                   onClick={e => {
@@ -628,9 +626,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                           </div>
                                         </>
                                       )}
-                                </div>
-                              </TooltipTrigger>
-                            </Tooltip>
+                            </div>
+                          </TooltipTrigger>
+                        </Tooltip>
                                 {/* Notes in this folder */}
                                 {isOpen && (
                                   <div className="pl-6">
@@ -640,16 +638,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                               </div>
                             );
                           })}
-                        </div>
-                      )}
                     </div>
+                  )}
+                </div>
 
-                    {/* Recent Notes */}
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <button
-                            onClick={() => setShowRecentNotes(!showRecentNotes)}
-                            className="flex items-center space-x-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 mb-2"
+                {/* Recent Notes */}
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={() => setShowRecentNotes(!showRecentNotes)}
+                        className="flex items-center space-x-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 mb-2"
                           onDragOver={e => {
                             e.preventDefault();
                             setDragOverRecents(true);
@@ -664,18 +662,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             }
                             setDragOverRecents(false);
                           }}
-                          >
-                            {showRecentNotes ? (
-                              <ChevronDown className="h-4 w-4" />
-                            ) : (
-                              <ChevronRight className="h-4 w-4" />
-                            )}
-                            <FileText className="h-4 w-4" />
-                            <span>Recent Notes</span>
-                          </button>
-                        </TooltipTrigger>
-                      </Tooltip>
-                      {showRecentNotes && (
+                      >
+                        {showRecentNotes ? (
+                          <ChevronDown className="h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4" />
+                        )}
+                        <FileText className="h-4 w-4" />
+                        <span>Recent Notes</span>
+                      </button>
+                    </TooltipTrigger>
+                  </Tooltip>
+                  {showRecentNotes && (
                       <div
                         className={cn(
                           'space-y-1 rounded transition-colors',
@@ -693,8 +691,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         }}
                       >
                         {(searchQuery ? filteredNotes : recentNotes).filter(note => !note.folderId && !note.deletedAt).map(note => renderNoteRow(note))}
-    </div>
-)}
+                                  </div>
+                                )}
 
                   </>
                 )}

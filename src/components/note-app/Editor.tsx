@@ -18,7 +18,10 @@ import {
   FileText,
   Trash2,
   Loader,
-  Palette
+  Palette,
+  Sun,
+  Moon,
+  Monitor
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -56,7 +59,7 @@ export const Editor: React.FC<EditorProps> = ({
   const saveBtnRef = useRef<HTMLButtonElement>(null);
   
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { settings } = useNoteStore();
+  const { settings, updateSettings } = useNoteStore();
   const [color, setColor] = useState<string | undefined>(note?.color);
 
   useEffect(() => {
@@ -113,7 +116,7 @@ export const Editor: React.FC<EditorProps> = ({
     });
     setLastSaved(new Date());
     setTimeout(() => {
-      setIsSaving(false);
+    setIsSaving(false);
       setShowSavedBadge(true);
       setTimeout(() => setShowSavedBadge(false), 1500);
     }, 500);
@@ -211,21 +214,50 @@ export const Editor: React.FC<EditorProps> = ({
   return (
     <TooltipProvider>
       <div className="flex-1 flex flex-col bg-white dark:bg-slate-900 overflow-hidden">
-        {/* Header */}
-        <div className="border-b border-slate-200 dark:border-slate-700 p-4 flex-shrink-0">
-          <div className="flex items-center justify-between mb-4">
+        {/* Compact Header with Theme Switcher Inline */}
+        <div className="border-b border-slate-200 dark:border-slate-700 flex items-center justify-between px-2 py-1 flex-shrink-0 gap-2">
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Note title..."
-              className="text-xl font-bold border-none shadow-none px-0 focus-visible:ring-0"
+            className="text-lg font-semibold border-none shadow-none px-0 py-1 focus-visible:ring-0 flex-1 bg-transparent"
               onKeyPress={handleKeyPress}
-            />
+            style={{ minHeight: 0, height: '2.25rem' }}
+          />
+          {note && (
+            <div className="text-xs text-slate-500 ml-2 whitespace-nowrap">
+              Last updated: {new Date(note.updatedAt).toLocaleString()}
+            </div>
+          )}
+          <div className="flex items-center gap-1 ml-2">
+            <button
+              className={cn('p-1 rounded-full', settings.theme === 'light' ? 'bg-slate-200 dark:bg-slate-700' : 'hover:bg-slate-100 dark:hover:bg-slate-800')}
+              onClick={() => updateSettings({ theme: 'light' })}
+              aria-label="Light theme"
+            >
+              <Sun className={cn('h-4 w-4', settings.theme === 'light' ? 'text-yellow-500' : 'text-slate-500')} />
+            </button>
+            <button
+              className={cn('p-1 rounded-full', settings.theme === 'dark' ? 'bg-slate-200 dark:bg-slate-700' : 'hover:bg-slate-100 dark:hover:bg-slate-800')}
+              onClick={() => updateSettings({ theme: 'dark' })}
+              aria-label="Dark theme"
+            >
+              <Moon className={cn('h-4 w-4', settings.theme === 'dark' ? 'text-blue-500' : 'text-slate-500')} />
+            </button>
+            <button
+              className={cn('p-1 rounded-full', settings.theme === 'system' ? 'bg-slate-200 dark:bg-slate-700' : 'hover:bg-slate-100 dark:hover:bg-slate-800')}
+              onClick={() => updateSettings({ theme: 'system' })}
+              aria-label="System theme"
+            >
+              <Monitor className={cn('h-4 w-4', settings.theme === 'system' ? 'text-green-500' : 'text-slate-500')} />
+            </button>
           </div>
+        </div>
+          
           
           {/* Toolbar */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
+          <div className="flex items-center justify-between mt-3 pt-2 flex-wrap overflow-x-auto min-w-0 w-full px-3">
+            <div className="flex items-center gap-3 flex-wrap">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -317,7 +349,7 @@ export const Editor: React.FC<EditorProps> = ({
               </Tooltip>
             </div>
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center gap-3">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
@@ -370,7 +402,7 @@ export const Editor: React.FC<EditorProps> = ({
                     onClick={handleSave}
                     ref={saveBtnRef}
                     disabled={isSaving}
-                    className="ml-2 flex items-center gap-2"
+                    className="flex items-center gap-2 shrink-0 min-w-0 max-w-xs truncate"
                   >
                     {isSaving ? (
                       <Loader className="h-4 w-4 animate-spin" />
@@ -391,19 +423,18 @@ export const Editor: React.FC<EditorProps> = ({
           </div>
           
           {/* Tags */}
-          <div className="mt-4">
-            <div className="flex items-center space-x-2 mb-2">
+          <div className="mt-4 border border-slate-100 dark:border-slate-800 rounded-lg p-3 bg-slate-50 dark:bg-slate-900">
+            <div className="flex items-center gap-2 mb-2">
               <Tag className="h-4 w-4 text-slate-500" />
               <span className="text-sm text-slate-600 dark:text-slate-400">Tags</span>
             </div>
-            
             <div className="flex flex-wrap gap-2 mb-2">
               {tags.map(tag => (
                 <Tooltip key={tag}>
                   <TooltipTrigger asChild>
                     <Badge
                       variant="secondary"
-                      className="cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700"
+                      className="cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-700 text-xs px-2 py-1"
                       onClick={() => handleRemoveTag(tag)}
                     >
                       #{tag} ×
@@ -415,18 +446,17 @@ export const Editor: React.FC<EditorProps> = ({
                 </Tooltip>
               ))}
             </div>
-            
-            <div className="flex space-x-2">
+            <div className="flex gap-2">
               <Input
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 placeholder="Add tag..."
-                className="flex-1"
+                className="flex-1 min-w-0"
                 onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
               />
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button onClick={handleAddTag} size="sm">Add</Button>
+                  <Button onClick={handleAddTag} size="sm" className="ml-2">Add</Button>
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Add new tag</p>
@@ -437,7 +467,7 @@ export const Editor: React.FC<EditorProps> = ({
         </div>
         
         {/* Editor Content */}
-        <div className="flex-1 flex min-h-0 overflow-hidden">
+        <div className="flex-1 flex min-h-0 overflow-hidden bg-slate-50 dark:bg-slate-900 rounded-lg mt-4 p-2">
           {/* Edit View */}
           {(viewMode === 'edit' || viewMode === 'split') && (
             <div className={cn(
@@ -476,7 +506,6 @@ export const Editor: React.FC<EditorProps> = ({
               </ScrollArea>
             </div>
           )}
-        </div>
       </div>
     </TooltipProvider>
   );
