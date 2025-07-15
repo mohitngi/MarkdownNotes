@@ -1,73 +1,85 @@
-# Welcome to your Lovable project
+# MarkdownNotes
 
-## Project info
+A Markdown based note-taking web app designed for a seamless user experience.
 
-**URL**: https://lovable.dev/projects/a20ded24-386e-431c-8290-2e254c5d6f56
+## Features
 
-## How can I edit this code?
+- **Elegant User Interface:** Clean, minimal, and professional design with seamless light, dark, and system theme switching.
+- **Markdown Editor & Preview:** Real-time split view, edit, and preview modes for efficient writing and reviewing.
+- **Tag Management:** Add, remove, and organize notes with tags for streamlined categorization.
+- **Customizable Editor:** Adjustable font size, line height, and font family for personalized writing comfort.
+- **Accessibility:** Keyboard navigation, focus indicators, and ARIA attributes for an inclusive experience.
+- **Persistent Settings:** Theme and editor preferences are saved locally for convenience.
 
-There are several ways of editing your application.
 
-**Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a20ded24-386e-431c-8290-2e254c5d6f56) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v16 or higher recommended)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
-**Use your preferred IDE**
+### Installation
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/MarkdownNotes.git
+   cd MarkdownNotes
+   ```
+2. **Install dependencies:**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Running the Application
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+```bash
 npm run dev
+# or
+yarn dev
 ```
 
-**Edit a file directly in GitHub**
+Visit [http://localhost:3000](http://localhost:3000) in your browser to access the application.
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Usage
 
-**Use GitHub Codespaces**
+- **Create and Edit Notes:** Select or create a note from the sidebar to begin editing.
+- **Markdown Toolbar:** Utilize the toolbar for formatting options such as bold, italic, lists, links, and code.
+- **Tagging:** Add tags to notes for organization. Remove tags by clicking on them.
+- **Theme Selection:** Instantly switch between light, dark, or system mode from the editor header.
+- **Saving Notes:** Notes are auto-saved or can be saved manually (Ctrl+Enter or Save button).
+- **Accessibility:** Navigate using the keyboard, with visible focus indicators and ARIA support.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Customization
 
-## What technologies are used for this project?
+- **Editor Preferences:** Adjust font size, line height, and font family in the settings.
+- **Theme:** Modify theme colors in the Tailwind configuration or CSS for a custom appearance.
+- **Favicon:** Replace `public/favicon.svg` to use your own branding.
 
-This project is built with:
+## Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- `src/components/note-app/Editor.tsx` – Main editor and preview interface
+- `src/components/note-app/MarkdownPreview.tsx` – Markdown rendering component
+- `src/stores/noteStore.ts` – State management logic
+- `public/` – Static assets (favicon, index.html)
 
-## How can I deploy this project?
+## Accessibility and Best Practices
 
-Simply open [Lovable](https://lovable.dev/projects/a20ded24-386e-431c-8290-2e254c5d6f56) and click on Share -> Publish.
+- Keyboard navigation and focus indicators for all interactive elements
+- ARIA attributes for improved accessibility
+- Responsive and mobile-friendly design
 
-## Can I connect a custom domain to my Lovable project?
+## Contributing
 
-Yes, you can!
+Contributions are welcome. To contribute:
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+1. Fork the repository and create a new branch: `git checkout -b feature/your-feature`
+2. Commit your changes: `git commit -am 'Add new feature'`
+3. Push to your branch: `git push origin feature/your-feature`
+4. Open a pull request for review
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+---
+
+**MarkdownNotes** – Professional, efficient, and organized note-taking for everyone.
