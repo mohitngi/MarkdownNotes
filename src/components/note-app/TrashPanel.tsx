@@ -140,3 +140,4 @@ export const TrashPanel: React.FC = () => {
     </div>
   );
 };
+ 
