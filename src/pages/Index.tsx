@@ -1,18 +1,49 @@
-
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from '@/components/note-app/Sidebar';
 import { Editor } from '@/components/note-app/Editor';
 import { SearchPanel } from '@/components/note-app/SearchPanel';
 import { SettingsPanel } from '@/components/note-app/SettingsPanel';
+import { TrashPanel } from '@/components/note-app/TrashPanel';
 import { useNoteStore } from '@/stores/noteStore';
 import { Note, Folder } from '@/types/noteTypes';
 import { Toaster } from '@/components/ui/toaster';
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogFooter, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Index = () => {
-  const [activeView, setActiveView] = useState<'editor' | 'search' | 'settings'>('editor');
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Map path to view and view to path
+  const pathToView = {
+    '/': 'editor',
+    '/search': 'search',
+    '/settings': 'settings',
+    '/trash': 'trash',
+  };
+  const viewToPath = {
+    editor: '/',
+    search: '/search',
+    settings: '/settings',
+    trash: '/trash',
+  };
+
+  // Set activeView from URL
+  const [activeView, setActiveView] = useState<'editor' | 'search' | 'settings' | 'trash'>(pathToView[location.pathname] || 'editor');
+
+  // Update activeView when URL changes
+  useEffect(() => {
+    setActiveView(pathToView[location.pathname] || 'editor');
+  }, [location.pathname]);
+
+  // When user changes section, update URL
+  const handleViewChange = (view: 'editor' | 'search' | 'settings' | 'trash') => {
+    setActiveView(view);
+    navigate(viewToPath[view]);
+  };
+
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [noteDialogOpen, setNoteDialogOpen] = useState(false);
   const [newNoteTitle, setNewNoteTitle] = useState('');
@@ -54,8 +85,8 @@ const Index = () => {
         notes={notes}
         currentNote={currentNote}
         onNewNote={handleNewNote}
-        onSelectNote={(note) => setActiveView('editor')}
-        onViewChange={setActiveView}
+        onSelectNote={(note) => handleViewChange('editor')}
+        onViewChange={handleViewChange}
         activeView={activeView}
       />
       <Dialog open={noteDialogOpen} onOpenChange={setNoteDialogOpen}>
@@ -114,6 +145,10 @@ const Index = () => {
         
         {activeView === 'settings' && (
           <SettingsPanel />
+        )}
+
+        {activeView === 'trash' && (
+          <TrashPanel />
         )}
       </main>
       

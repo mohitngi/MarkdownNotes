@@ -54,7 +54,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [searchQuery, setSearchQuery] = useState('');
   const [showFolders, setShowFolders] = useState(true);
   const [showRecentNotes, setShowRecentNotes] = useState(true);
-  const { selectNote, createFolder, deleteFolder, updateNote, deleteNote, restoreNote, purgeTrashedNotes, deleteNotePermanently, restoreFolder, deleteFolderPermanently } = useNoteStore();
+  const { createFolder, deleteFolder, updateNote, deleteNote, restoreNote, purgeTrashedNotes, deleteNotePermanently, restoreFolder, deleteFolderPermanently } = useNoteStore();
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
   const [folderToDelete, setFolderToDelete] = useState<FolderType | null>(null);
@@ -86,7 +86,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const trashedFolders = folders.filter(folder => folder.deletedAt).sort((a, b) => new Date(b.deletedAt!).getTime() - new Date(a.deletedAt!).getTime());
 
   const handleSelectNote = (note: Note) => {
-    selectNote(note.id);
     onSelectNote(note);
   };
 
@@ -377,117 +376,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             <ScrollArea className="flex-1 px-4">
               <div className="pb-4 space-y-6">
-                {activeView === 'trash' ? (
-                  <div>
-                    <div className="flex items-center space-x-2 mb-4">
-                      <Trash2 className="h-5 w-5" />
-                      <span className="text-base font-semibold text-slate-800 dark:text-slate-100">Trash</span>
-                    </div>
-                    <div className="text-xs text-slate-400 dark:text-slate-500 mb-4">Deleted notes and folders will appear here for 30 days</div>
-                    {trashedFolders.length === 0 && trashedNotes.length === 0 ? (
-                      <div className="flex flex-col items-center justify-center py-12 text-center text-slate-400 dark:text-slate-500">
-                        <Trash2 className="h-10 w-10 mb-2" />
-                        <div className="font-medium text-base">No items in Trash</div>
-                      </div>
-                    ) : (
-                      <div className="space-y-6">
-                        {trashedFolders.length > 0 && (
-                          <div>
-                            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">Folders</div>
-                            <div className="space-y-3">
-                              {trashedFolders.map(folder => (
-                                <div
-                                  key={folder.id}
-                                  className="flex items-center justify-between bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm px-4 py-3 transition hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-700"
-                                >
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2">
-                                      <Folder className="h-4 w-4 text-slate-400" />
-                                      <span className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">{folder.name}</span>
-                                    </div>
-                                    <div className="truncate text-xs text-slate-500 mt-1">Deleted {folder.deletedAt && new Date(folder.deletedAt).toLocaleDateString()}</div>
-                                  </div>
-                                  <div className="flex items-center gap-2 ml-4">
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <button
-                                          className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900 text-green-600 hover:text-green-800 transition"
-                                          onClick={() => restoreFolder(folder.id)}
-                                        >
-                                          <Undo2 className="h-4 w-4" />
-                                        </button>
-                                      </TooltipTrigger>
-                                      <TooltipContent>Restore</TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <button
-                                          className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900 text-red-500 hover:text-red-700 transition"
-                                          onClick={() => { deleteFolderPermanently(folder.id); setTimeout(() => purgeTrashedNotes(), 100); }}
-                                        >
-                                          <XCircle className="h-4 w-4" />
-                                        </button>
-                                      </TooltipTrigger>
-                                      <TooltipContent>Delete Forever</TooltipContent>
-                                    </Tooltip>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                        {trashedNotes.length > 0 && (
-                          <div>
-                            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">Notes</div>
-                            <div className="space-y-3">
-                              {trashedNotes.map(note => (
-                                <div
-                                  key={note.id}
-                                  className="flex items-center justify-between bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm px-4 py-3 transition hover:shadow-md hover:bg-slate-50 dark:hover:bg-slate-700"
-                                >
-                                  <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2">
-                                      {note.color && (
-                                        <span className="w-3 h-3 rounded-full border border-slate-300 dark:border-slate-700" style={{ backgroundColor: note.color }} />
-                                      )}
-                                      <span className="truncate text-sm font-medium text-slate-900 dark:text-slate-100">{note.title}</span>
-                                    </div>
-                                    <div className="truncate text-xs text-slate-500 mt-1">Deleted {note.deletedAt && new Date(note.deletedAt).toLocaleDateString()}</div>
-                                  </div>
-                                  <div className="flex items-center gap-2 ml-4">
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <button
-                                          className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-900 text-green-600 hover:text-green-800 transition"
-                                          onClick={() => restoreNote(note.id)}
-                                        >
-                                          <Undo2 className="h-4 w-4" />
-                                        </button>
-                                      </TooltipTrigger>
-                                      <TooltipContent>Restore</TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                      <TooltipTrigger asChild>
-                                        <button
-                                          className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900 text-red-500 hover:text-red-700 transition"
-                                          onClick={() => { deleteNotePermanently(note.id); setTimeout(() => purgeTrashedNotes(), 100); }}
-                                        >
-                                          <XCircle className="h-4 w-4" />
-                                        </button>
-                                      </TooltipTrigger>
-                                      <TooltipContent>Delete Forever</TooltipContent>
-                                    </Tooltip>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <>
                 {/* Favorites */}
                 {favoriteNotes.length > 0 && (
                   <div>
@@ -686,27 +574,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     </TooltipTrigger>
                   </Tooltip>
                   {showRecentNotes && (
-                      <div
-                        className={cn(
-                          'space-y-1 rounded transition-colors',
-                          dragOverRecents && 'bg-blue-100 dark:bg-blue-900',
-                        )}
-                        onDragOver={e => {
-                          e.preventDefault();
-                          setDragOverRecents(true);
-                        }}
-                        onDragLeave={e => setDragOverRecents(false)}
-                        onDrop={e => {
-                          const noteId = e.dataTransfer.getData('noteId');
-                          if (noteId) updateNote(noteId, { folderId: undefined });
-                          setDragOverRecents(false);
-                        }}
-                      >
-                        {(searchQuery ? filteredNotes : recentNotes).filter(note => !note.folderId && !note.deletedAt).map(note => renderNoteRow(note))}
-                                  </div>
-                                )}
-
-                  </>
+                  <div
+                    className={cn(
+                      'space-y-1 rounded transition-colors',
+                      dragOverRecents && 'bg-blue-100 dark:bg-blue-900',
+                    )}
+                    onDragOver={e => {
+                      e.preventDefault();
+                      setDragOverRecents(true);
+                    }}
+                    onDragLeave={e => setDragOverRecents(false)}
+                    onDrop={e => {
+                      const noteId = e.dataTransfer.getData('noteId');
+                      if (noteId) updateNote(noteId, { folderId: undefined });
+                      setDragOverRecents(false);
+                    }}
+                  >
+                    {(searchQuery ? filteredNotes : recentNotes).filter(note => !note.folderId && !note.deletedAt).map(note => renderNoteRow(note))}
+                  </div>
                 )}
               </div>
             </ScrollArea>
@@ -796,60 +681,62 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </Tooltip>
           </div>
         )}
+        <Dialog open={folderDialogOpen} onOpenChange={setFolderDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Create New Folder</DialogTitle>
+            </DialogHeader>
+            <input
+              className="w-full border rounded px-3 py-2 mt-2"
+              placeholder="Folder name"
+              value={newFolderName}
+              onChange={e => setNewFolderName(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleCreateFolder(); }}
+              autoFocus
+            />
+            <DialogFooter>
+              <Button onClick={handleCreateFolder} disabled={!newFolderName.trim()}>
+                Create
+              </Button>
+              <DialogClose asChild>
+                <Button variant="ghost">Cancel</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+        {/* Folder Delete Confirmation Dialog */}
+        <AlertDialog open={!!folderToDelete} onOpenChange={open => { if (!open) setFolderToDelete(null); }}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Folder</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to move the folder "{folderToDelete?.name}" to Trash?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setFolderToDelete(null)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => { if (folderToDelete) { deleteFolder(folderToDelete.id); setFolderToDelete(null); } }}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+        {/* Note Delete Confirmation Dialog */}
+        <AlertDialog open={!!noteToDelete} onOpenChange={open => { if (!open) setNoteToDelete(null); }}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Note</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to move the note "{noteToDelete?.title}" to Trash?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={() => setNoteToDelete(null)}>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => { if (noteToDelete) { deleteNote(noteToDelete.id); setNoteToDelete(null); } }}>Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
-      <Dialog open={folderDialogOpen} onOpenChange={setFolderDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Create New Folder</DialogTitle>
-          </DialogHeader>
-          <input
-            className="w-full border rounded px-3 py-2 mt-2"
-            placeholder="Folder name"
-            value={newFolderName}
-            onChange={e => setNewFolderName(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') handleCreateFolder(); }}
-            autoFocus
-          />
-          <DialogFooter>
-            <Button onClick={handleCreateFolder} disabled={!newFolderName.trim()}>
-              Create
-            </Button>
-            <DialogClose asChild>
-              <Button variant="ghost">Cancel</Button>
-            </DialogClose>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      {/* Folder Delete Confirmation Dialog */}
-      <AlertDialog open={!!folderToDelete} onOpenChange={open => { if (!open) setFolderToDelete(null); }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Folder</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to move the folder "{folderToDelete?.name}" to Trash?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setFolderToDelete(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { if (folderToDelete) { deleteFolder(folderToDelete.id); setFolderToDelete(null); } }}>Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      {/* Note Delete Confirmation Dialog */}
-      <AlertDialog open={!!noteToDelete} onOpenChange={open => { if (!open) setNoteToDelete(null); }}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Note</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to move the note "{noteToDelete?.title}" to Trash?
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setNoteToDelete(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => { if (noteToDelete) { deleteNote(noteToDelete.id); setNoteToDelete(null); } }}>Delete</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </TooltipProvider>
   );
-};
+}
+
+export default Sidebar;

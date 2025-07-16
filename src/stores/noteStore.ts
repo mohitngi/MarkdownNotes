@@ -242,10 +242,9 @@ Happy note-taking! 🚀`,
       },
 
       purgeTrashedNotes: () => {
-        const now = new Date();
         set(state => ({
-          notes: state.notes.filter(note => !note.deletedAt || (now.getTime() - new Date(note.deletedAt).getTime()) < 30 * 24 * 60 * 60 * 1000),
-          folders: state.folders.filter(folder => !folder.deletedAt || (now.getTime() - new Date(folder.deletedAt).getTime()) < 30 * 24 * 60 * 60 * 1000)
+          notes: state.notes.filter(note => !note.deletedAt),
+          folders: state.folders.filter(folder => !folder.deletedAt)
         }));
       },
 

@@ -189,7 +189,7 @@ export const Editor: React.FC<EditorProps> = ({
     }
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       handleSave();
     }
@@ -241,7 +241,7 @@ export const Editor: React.FC<EditorProps> = ({
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Note title..."
             className="text-lg font-semibold border-none shadow-none px-0 py-1 focus-visible:ring-0 flex-1 bg-transparent"
-              onKeyPress={handleKeyPress}
+              onKeyDown={handleKeyDown}
             style={{ minHeight: 0, height: '2.25rem' }}
           />
           {note && (
@@ -478,7 +478,7 @@ export const Editor: React.FC<EditorProps> = ({
                   onChange={(e) => setNewTag(e.target.value)}
                   placeholder="Add tag..."
                   className="flex-1 min-w-0"
-                  onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleAddTag()}
                 />
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -505,7 +505,7 @@ export const Editor: React.FC<EditorProps> = ({
                       onChange={(e) => setContent(e.target.value)}
                       placeholder="Start writing your note..."
                       className="min-h-[calc(100vh-300px)] w-full resize-none border-none rounded-none focus-visible:outline-none font-mono text-sm leading-relaxed p-6 bg-transparent"
-                      onKeyPress={handleKeyPress}
+                      onKeyDown={handleKeyDown}
                       style={{
                         fontSize: `${settings.fontSize}px`,
                         lineHeight: settings.lineHeight,
