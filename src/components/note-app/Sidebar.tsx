@@ -213,11 +213,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <Palette className="h-4 w-4" />
                 </button>
                 {colorPickerNoteId === note.id && (
-                  <div className="absolute right-0 top-6 z-20 w-60 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow p-1">
-                    <div className="flex gap-0.5 overflow-x-auto py-0.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                  <div className="absolute right-0 top-6 z-20 w-60 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2">
+                    <div className="flex gap-1 overflow-x-auto py-1 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                       <button
-                        className="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 hover:scale-125 transition-transform flex-shrink-0"
-                        style={{ backgroundColor: 'transparent' }}
+                        className="w-4 h-4 rounded-full bg-white dark:bg-slate-800 shadow hover:shadow-md hover:scale-125 transition focus:outline-none focus:ring-2 focus:ring-blue-400 flex-shrink-0"
                         onClick={e => {
                           e.stopPropagation();
                           updateNote(note.id, { color: undefined });
@@ -227,7 +226,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       {colors.map(color => (
                         <button
                           key={color}
-                          className="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 hover:scale-125 transition-transform flex-shrink-0"
+                          className={cn(
+                            "w-4 h-4 rounded-full shadow hover:shadow-md hover:scale-125 transition focus:outline-none focus:ring-2 focus:ring-blue-400 flex-shrink-0",
+                            note.color === color && "ring-2 ring-blue-400 ring-offset-2 ring-offset-white dark:ring-offset-slate-800"
+                          )}
                           style={{ backgroundColor: color }}
                           onClick={e => {
                             e.stopPropagation();
