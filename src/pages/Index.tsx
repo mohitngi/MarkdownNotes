@@ -56,7 +56,8 @@ const Index = () => {
     createNote,
     updateNote,
     deleteNote,
-    createFolder
+    createFolder,
+    selectNote
   } = useNoteStore();
 
   useEffect(() => {
@@ -76,6 +77,11 @@ const Index = () => {
     }
   };
 
+  const handleSelectNote = (note: Note) => {
+    selectNote(note.id);
+    handleViewChange('editor');
+  };
+
   return (
     <div className="h-screen bg-slate-50 dark:bg-slate-900 flex overflow-hidden">
       <Sidebar
@@ -85,7 +91,7 @@ const Index = () => {
         notes={notes}
         currentNote={currentNote}
         onNewNote={handleNewNote}
-        onSelectNote={(note) => handleViewChange('editor')}
+        onSelectNote={handleSelectNote}
         onViewChange={handleViewChange}
         activeView={activeView}
       />
@@ -125,7 +131,7 @@ const Index = () => {
         </DialogContent>
       </Dialog>
       
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <main className={activeView === 'trash' ? 'flex-1 flex flex-col min-w-0 h-screen overflow-y-auto' : 'flex-1 flex flex-col min-w-0 overflow-hidden'}>
         {activeView === 'editor' && (
           <Editor
             note={currentNote}
@@ -137,9 +143,7 @@ const Index = () => {
         {activeView === 'search' && (
           <SearchPanel
             notes={notes}
-            onSelectNote={(note) => {
-              setActiveView('editor');
-            }}
+            onSelectNote={handleSelectNote}
           />
         )}
         

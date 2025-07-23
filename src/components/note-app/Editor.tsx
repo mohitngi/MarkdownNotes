@@ -47,9 +47,9 @@ export const Editor: React.FC<EditorProps> = ({
   onUpdateNote,
   onDeleteNote
 }) => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
+  const [title, setTitle] = useState(note ? note.title : '');
+  const [content, setContent] = useState(note ? note.content : '');
+  const [tags, setTags] = useState<string[]>(note ? note.tags : []);
   const [newTag, setNewTag] = useState('');
   const [viewMode, setViewMode] = useState<'edit' | 'preview' | 'split'>('split');
   const [isSaving, setIsSaving] = useState(false);
@@ -57,10 +57,9 @@ export const Editor: React.FC<EditorProps> = ({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showSavedBadge, setShowSavedBadge] = useState(false);
   const saveBtnRef = useRef<HTMLButtonElement>(null);
-  
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { settings, updateSettings } = useNoteStore();
-  const [color, setColor] = useState<string | undefined>(note?.color);
+  const [color, setColor] = useState<string | undefined>(note ? note.color : undefined);
 
   useEffect(() => {
     if (note) {
@@ -78,22 +77,18 @@ export const Editor: React.FC<EditorProps> = ({
 
   useEffect(() => {
     if (!note || !settings.autoSave) return;
-
     const timeoutId = setTimeout(async () => {
       if (title !== note.title || content !== note.content || JSON.stringify(tags) !== JSON.stringify(note.tags)) {
         setIsSaving(true);
-        
         onUpdateNote(note.id, {
           title: title || 'Untitled',
           content,
           tags
         });
-        
         setLastSaved(new Date());
         setIsSaving(false);
       }
     }, settings.autoSaveInterval);
-
     return () => clearTimeout(timeoutId);
   }, [title, content, tags, note, onUpdateNote, settings]);
 
@@ -209,16 +204,8 @@ export const Editor: React.FC<EditorProps> = ({
 
   if (!note) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-900">
-        <div className="text-center">
-          <FileText className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-slate-600 dark:text-slate-400 mb-2">
-            No note selected
-          </h2>
-          <p className="text-slate-500">
-            Select a note from the sidebar or create a new one to get started.
-          </p>
-        </div>
+      <div className="flex-1 flex items-center justify-center text-muted-foreground text-lg">
+        No note selected. Please select or create a note.
       </div>
     );
   }

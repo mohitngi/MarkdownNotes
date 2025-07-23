@@ -68,7 +68,7 @@ export const TrashPanel: React.FC = () => {
           <div className="text-sm">Deleted notes and folders will appear here for 30 days before being permanently removed.</div>
         </div>
       ) : (
-        <>
+        <div>
           {trashedFolders.length > 0 && (
             <div className="mb-8">
               <h3 className="font-semibold mb-2 text-slate-700 dark:text-slate-200">Folders</h3>
@@ -107,7 +107,7 @@ export const TrashPanel: React.FC = () => {
               <h3 className="font-semibold mb-2 text-slate-700 dark:text-slate-200">Notes</h3>
               <ul className="space-y-2">
                 {trashedNotes.map(note => (
-                  <li key={note.id} className="flex items-center justify-between bg-slate-50 dark:bg-slate-900 rounded p-3 border border-slate-200 dark:border-slate-700">
+                  <li key={note.id} className="flex items-center justify-between bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded p-3">
                     <div>
                       <div className="font-medium truncate max-w-xs">{note.title}</div>
                       <div className="text-xs text-slate-400">Deleted {new Date(note.deletedAt!).toLocaleString()}</div>
@@ -135,9 +135,8 @@ export const TrashPanel: React.FC = () => {
               </ul>
             </div>
           )}
-        </>
+        </div>
       )}
     </div>
   );
 };
- 
