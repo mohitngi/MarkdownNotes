@@ -47,10 +47,12 @@ Visit [http://localhost:3000](http://localhost:3000) in your browser to access t
 
 - **Create and Edit Notes:** Select or create a note from the sidebar to begin editing.
 - **Markdown Toolbar:** Utilize the toolbar for formatting options such as bold, italic, lists, links, and code.
-- **Tagging:** Add tags to notes for organization. Remove tags by clicking on them.
+- **Organize Notes:** Organize notes into folders
+- **Tag System:** Use tags like #important #work #personal
+- **Search Notes:** Try the search feature
 - **Theme Selection:** Instantly switch between light, dark, or system mode from the editor header.
 - **Saving Notes:** Notes are auto-saved or can be saved manually (Ctrl+Enter or Save button).
-- **Accessibility:** Navigate using the keyboard, with visible focus indicators and ARIA support.
+
 
 ## Customization
 
