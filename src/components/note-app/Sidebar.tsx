@@ -68,8 +68,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const [noteToDelete, setNoteToDelete] = useState<Note | null>(null);
   const filteredNotes = notes.filter(note =>
-    note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.content.toLowerCase().includes(searchQuery.toLowerCase())
+    !note.deletedAt && (
+      note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.content.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   ).sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime());
 
   const recentNotes = notes
@@ -119,22 +121,50 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   // Helper for rendering a note row (used in both folders and recents)
-  const renderNoteRow = (note: Note) => (
+  const renderNoteRow = (note: Note) => {
+    const colors = [
+      '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
+      '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1',
+      '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e', '#64748b',
+      '#6b7280', '#374151', '#1f2937', '#111827'
+    ];
+
+    return (
     <Tooltip key={note.id}>
       <TooltipTrigger asChild>
         {editingNoteId === note.id ? (
-          <input
-            ref={inputRef}
-            className="text-sm font-medium w-full bg-transparent border-b border-blue-400 outline-none px-1"
-            value={editingValue}
-            autoFocus
-            onChange={e => setEditingValue(e.target.value)}
-            onBlur={() => handleNoteTitleSave(note)}
-            onKeyDown={e => {
-              if (e.key === 'Enter') handleNoteTitleSave(note);
-              if (e.key === 'Escape') { setEditingNoteId(null); setEditingValue(''); }
-            }}
-          />
+          <div
+            className={cn(
+              "flex items-center justify-between group/sidebar-row w-full py-2 pr-3 pl-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700",
+              note.title === "Welcome" && "bg-blue-50 dark:bg-blue-900 text-blue-800 dark:text-blue-200 font-semibold"
+            )}
+          >
+            <div className="flex-1 min-w-0">
+              <div className="relative flex items-center">
+                {note.color && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border border-slate-300 dark:border-slate-700" style={{ backgroundColor: note.color, zIndex: 0 }} />
+                )}
+                <input
+                  ref={inputRef}
+                  className="relative text-sm font-medium w-full bg-transparent border-b border-blue-400 outline-none pl-5 pr-2"
+                  style={{ zIndex: 1 }}
+                  value={editingValue}
+                  autoFocus
+                  onChange={e => setEditingValue(e.target.value)}
+                  onBlur={() => handleNoteTitleSave(note)}
+                  onKeyDown={e => {
+                    if (e.key === 'Enter') handleNoteTitleSave(note);
+                    if (e.key === 'Escape') { setEditingNoteId(null); setEditingValue(''); }
+                  }}
+                />
+              </div>
+            </div>
+            <div className="flex items-center gap-1 flex-shrink-0 opacity-50">
+              <div className="w-4 h-4" />
+              <div className="w-4 h-4" />
+              <div className="w-4 h-4" />
+            </div>
+          </div>
         ) : (
           <div
             className={cn(
@@ -168,7 +198,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center gap-1 flex-shrink-0 opacity-0 group-hover/sidebar-row:opacity-100 transition-opacity">
               <div className="relative group">
                 <button
                   className="text-slate-400 hover:text-blue-500 p-1"
@@ -183,9 +213,29 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   <Palette className="h-4 w-4" />
                 </button>
                 {colorPickerNoteId === note.id && (
-                  <div className="absolute left-1/2 -translate-x-1/2 top-6 z-20 w-80 max-w-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow p-2">
-                    <div className="flex gap-2 overflow-x-auto flex-nowrap min-w-[600px] py-1 px-1 scrollbar">
-                      {/* ...color buttons (unchanged)... */}
+                  <div className="absolute right-0 top-6 z-20 w-60 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded shadow p-1">
+                    <div className="flex gap-0.5 overflow-x-auto py-0.5 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                      <button
+                        className="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 hover:scale-125 transition-transform flex-shrink-0"
+                        style={{ backgroundColor: 'transparent' }}
+                        onClick={e => {
+                          e.stopPropagation();
+                          updateNote(note.id, { color: undefined });
+                          setColorPickerNoteId(null);
+                        }}
+                      />
+                      {colors.map(color => (
+                        <button
+                          key={color}
+                          className="w-4 h-4 rounded-full border border-slate-300 dark:border-slate-600 hover:scale-125 transition-transform flex-shrink-0"
+                          style={{ backgroundColor: color }}
+                          onClick={e => {
+                            e.stopPropagation();
+                            updateNote(note.id, { color });
+                            setColorPickerNoteId(null);
+                          }}
+                        />
+                      ))}
                     </div>
                   </div>
                 )}
@@ -218,7 +268,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         )}
       </TooltipTrigger>
     </Tooltip>
-  );
+    );
+  };
 
   return (
     <TooltipProvider>
@@ -354,43 +405,66 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
             <ScrollArea className="flex-1 px-4">
               <div className="pb-4 space-y-6">
-                {/* Favorites */}
-                {favoriteNotes.length > 0 && (
+                {/* Search Results */}
+                {searchQuery && (
                   <div>
                     <div className="flex items-center space-x-2 mb-2">
-                      <Star className="h-4 w-4 text-yellow-500" />
+                      <Search className="h-4 w-4 text-blue-500" />
                       <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
-                        Favorites
+                        Search Results ({filteredNotes.length})
                       </span>
                     </div>
                     <div className="space-y-1">
-                      {favoriteNotes.map(note => (
-                        <Tooltip key={note.id}>
-                          <TooltipTrigger asChild>
-                            <Button
-                              variant={currentNote?.id === note.id ? 'secondary' : 'ghost'}
-                              className="w-full justify-start text-left h-auto py-2"
-                              onClick={() => handleSelectNote(note)}
-                            >
-                              <div className="flex-1 min-w-0">
-                                <div className="truncate text-sm font-medium">
-                                  {note.title}
-                                </div>
-                                <div className="truncate text-xs text-slate-500">
-                                  {new Date(note.updatedAt).toLocaleDateString()}
-                                </div>
-                              </div>
-                            </Button>
-                          </TooltipTrigger>
-                        </Tooltip>
-                      ))}
+                      {filteredNotes.length > 0 ? (
+                        filteredNotes.map(note => renderNoteRow(note))
+                      ) : (
+                        <div className="text-sm text-slate-500 py-2">
+                          No notes found matching "{searchQuery}"
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
 
-                {/* Folders */}
-                <div>
-                  <div className="flex items-center justify-between mb-2">
+                {/* Show other sections only when not searching */}
+                {!searchQuery && (
+                  <>
+                    {/* Favorites */}
+                    {favoriteNotes.length > 0 && (
+                      <div>
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Star className="h-4 w-4 text-yellow-500" />
+                          <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                            Favorites
+                          </span>
+                        </div>
+                        <div className="space-y-1">
+                          {favoriteNotes.map(note => (
+                            <Tooltip key={note.id}>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant={currentNote?.id === note.id ? 'secondary' : 'ghost'}
+                                  className="w-full justify-start text-left h-auto py-2"
+                                  onClick={() => handleSelectNote(note)}
+                                >
+                                  <div className="flex-1 min-w-0">
+                                    <div className="truncate text-sm font-medium">
+                                      {note.title}
+                                    </div>
+                                    <div className="truncate text-xs text-slate-500">
+                                      {new Date(note.updatedAt).toLocaleDateString()}
+                                    </div>
+                                  </div>
+                                </Button>
+                              </TooltipTrigger>
+                            </Tooltip>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    {/* Folders */}
+                    <div>
+                      <div className="flex items-center justify-between mb-2">
                         <button
                           onClick={() => setShowFolders(!showFolders)}
                           className="flex items-center space-x-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100"
@@ -404,24 +478,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           <span>Folders</span>
                         </button>
 
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={handleNewFolder}
-                        >
-                          <Plus className="h-3 w-3" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Create new folder</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </div>
-                  
-                  {showFolders && (
-                    <div className="space-y-1">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={handleNewFolder}
+                            >
+                              <Plus className="h-3 w-3" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>Create new folder</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      
+                      {showFolders && (
+                        <div className="space-y-1">
                           {folders.filter(folder => !folder.deletedAt).map(folder => {
                             const isOpen = openFolders[folder.id] ?? true;
                             return (
@@ -445,7 +519,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                 )}
                               >
                                 <Tooltip>
-                              <TooltipTrigger asChild>
+                                  <TooltipTrigger asChild>
                                     <div
                                       className={cn(
                                         'flex items-center space-x-2 py-1 px-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 cursor-pointer group group/sidebar-row',
@@ -488,7 +562,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                               <TooltipContent>Edit</TooltipContent>
                                             </Tooltip>
                                             <Tooltip>
-                          <TooltipTrigger asChild>
+                                              <TooltipTrigger asChild>
                                                 <button
                                                   className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900 text-red-500 hover:text-red-700 transition"
                                                   onClick={e => {
@@ -504,9 +578,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                                           </div>
                                         </>
                                       )}
-                            </div>
-                          </TooltipTrigger>
-                        </Tooltip>
+                                    </div>
+                                  </TooltipTrigger>
+                                </Tooltip>
                                 {/* Notes in this folder */}
                                 {isOpen && (
                                   <div className="pl-6">
@@ -516,16 +590,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
                               </div>
                             );
                           })}
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
 
-                {/* Recent Notes */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        onClick={() => setShowRecentNotes(!showRecentNotes)}
-                        className="flex items-center space-x-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 mb-2"
+                    {/* Recent Notes */}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button
+                          onClick={() => setShowRecentNotes(!showRecentNotes)}
+                          className="flex items-center space-x-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-slate-100 mb-2"
                           onDragOver={e => {
                             e.preventDefault();
                             setDragOverRecents(true);
@@ -540,36 +614,38 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             }
                             setDragOverRecents(false);
                           }}
-                      >
-                        {showRecentNotes ? (
-                          <ChevronDown className="h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="h-4 w-4" />
+                        >
+                          {showRecentNotes ? (
+                            <ChevronDown className="h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4" />
+                          )}
+                          <FileText className="h-4 w-4" />
+                          <span>Recent Notes</span>
+                        </button>
+                      </TooltipTrigger>
+                    </Tooltip>
+                    {showRecentNotes && (
+                      <div
+                        className={cn(
+                          'space-y-1 rounded transition-colors',
+                          dragOverRecents && 'bg-blue-100 dark:bg-blue-900',
                         )}
-                        <FileText className="h-4 w-4" />
-                        <span>Recent Notes</span>
-                      </button>
-                    </TooltipTrigger>
-                  </Tooltip>
-                  {showRecentNotes && (
-                  <div
-                    className={cn(
-                      'space-y-1 rounded transition-colors',
-                      dragOverRecents && 'bg-blue-100 dark:bg-blue-900',
+                        onDragOver={e => {
+                          e.preventDefault();
+                          setDragOverRecents(true);
+                        }}
+                        onDragLeave={e => setDragOverRecents(false)}
+                        onDrop={e => {
+                          const noteId = e.dataTransfer.getData('noteId');
+                          if (noteId) updateNote(noteId, { folderId: undefined });
+                          setDragOverRecents(false);
+                        }}
+                      >
+                        {(searchQuery ? filteredNotes : recentNotes).filter(note => !note.folderId && !note.deletedAt).map(note => renderNoteRow(note))}
+                      </div>
                     )}
-                    onDragOver={e => {
-                      e.preventDefault();
-                      setDragOverRecents(true);
-                    }}
-                    onDragLeave={e => setDragOverRecents(false)}
-                    onDrop={e => {
-                      const noteId = e.dataTransfer.getData('noteId');
-                      if (noteId) updateNote(noteId, { folderId: undefined });
-                      setDragOverRecents(false);
-                    }}
-                  >
-                    {(searchQuery ? filteredNotes : recentNotes).filter(note => !note.folderId && !note.deletedAt).map(note => renderNoteRow(note))}
-                  </div>
+                  </>
                 )}
               </div>
             </ScrollArea>

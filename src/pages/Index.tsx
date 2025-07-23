@@ -115,7 +115,7 @@ const Index = () => {
               onChange={e => setNewNoteFolder(e.target.value || undefined)}
             >
               <option value="">No Folder</option>
-              {folders.map(folder => (
+              {folders.filter(folder => !folder.deletedAt).map(folder => (
                 <option key={folder.id} value={folder.id}>{folder.name}</option>
               ))}
             </select>
