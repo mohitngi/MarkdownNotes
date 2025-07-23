@@ -179,7 +179,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 {note.color && (
                   <span className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full border border-slate-300 dark:border-slate-700" style={{ backgroundColor: note.color, zIndex: 0 }} />
                 )}
-                <span className="relative truncate text-sm font-medium pl-5" style={{ zIndex: 1 }}>{note.title}</span>
+                <div className="relative pl-5 w-full" style={{ zIndex: 1 }}>
+                  <div className="relative w-full overflow-hidden">
+                    <div className="relative w-full">
+                      <div className="absolute inset-0 overflow-x-auto whitespace-nowrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] hover:overflow-x-auto">
+                        <span className="text-sm font-medium">
+                          {note.title}
+                        </span>
+                      </div>
+                      <div className="invisible">
+                        {note.title}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="truncate text-xs text-slate-500">Created {new Date(note.createdAt).toLocaleDateString()}</div>
               {note.tags.length > 0 && (
@@ -200,18 +213,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </div>
             <div className="flex items-center gap-1 flex-shrink-0 opacity-0 group-hover/sidebar-row:opacity-100 transition-opacity">
               <div className="relative group">
-                <button
-                  className="text-slate-400 hover:text-blue-500 p-1"
-                  title="Change note color"
-                  tabIndex={-1}
-                  onClick={e => {
-                    e.stopPropagation();
-                    setColorPickerNoteId(colorPickerNoteId === note.id ? null : note.id);
-                  }}
-                  onMouseDown={e => e.preventDefault()}
-                >
-                  <Palette className="h-4 w-4" />
-                </button>
+                <Tooltip>
+  <TooltipTrigger asChild>
+    <button
+      className="text-slate-400 hover:text-blue-500 p-1"
+      tabIndex={-1}
+      onClick={e => {
+        e.stopPropagation();
+        setColorPickerNoteId(colorPickerNoteId === note.id ? null : note.id);
+      }}
+      onMouseDown={e => e.preventDefault()}
+    >
+      <Palette className="h-4 w-4" />
+    </button>
+  </TooltipTrigger>
+  <TooltipContent side="top" className="px-3 py-2 rounded-lg shadow bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium">
+    Change note color
+  </TooltipContent>
+</Tooltip>
                 {colorPickerNoteId === note.id && (
                   <div className="absolute right-0 top-6 z-20 w-60 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-lg p-2">
                     <div className="flex gap-1 overflow-x-auto py-1 px-1 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
@@ -242,29 +261,41 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </div>
                 )}
               </div>
-              <button
-                className="text-slate-400 hover:text-blue-500"
-                title="Edit note title"
-                tabIndex={-1}
-                onClick={e => {
-                  e.stopPropagation();
-                  setEditingNoteId(note.id);
-                  setEditingValue(note.title);
-                }}
-              >
-                <Pencil className="h-4 w-4" />
-              </button>
-              <button
-                className="text-red-500 hover:text-red-700"
-                title="Delete note"
-                tabIndex={-1}
-                onClick={e => {
-                  e.stopPropagation();
-                  setNoteToDelete(note);
-                }}
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
+              <Tooltip>
+  <TooltipTrigger asChild>
+    <button
+      className="text-slate-400 hover:text-blue-500"
+      tabIndex={-1}
+      onClick={e => {
+        e.stopPropagation();
+        setEditingNoteId(note.id);
+        setEditingValue(note.title);
+      }}
+    >
+      <Pencil className="h-4 w-4" />
+    </button>
+  </TooltipTrigger>
+  <TooltipContent side="top" className="px-3 py-2 rounded-lg shadow bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium">
+    Edit note title
+  </TooltipContent>
+</Tooltip>
+              <Tooltip>
+  <TooltipTrigger asChild>
+    <button
+      className="text-red-500 hover:text-red-700"
+      tabIndex={-1}
+      onClick={e => {
+        e.stopPropagation();
+        setNoteToDelete(note);
+      }}
+    >
+      <Trash2 className="h-4 w-4" />
+    </button>
+  </TooltipTrigger>
+  <TooltipContent side="top" className="px-3 py-2 rounded-lg shadow bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-medium">
+    Delete note
+  </TooltipContent>
+</Tooltip>
             </div>
           </div>
         )}
@@ -355,21 +386,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </TooltipTrigger>
                 </Tooltip>
 
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant={activeView === 'search' ? 'secondary' : 'ghost'}
-                      className={cn(
-                        'w-full justify-start hover:bg-slate-200 dark:hover:bg-slate-700',
-                        activeView === 'search' && 'bg-slate-100 text-slate-900 dark:bg-slate-700 dark:text-blue-200'
-                      )}
-                      onClick={() => onViewChange('search')}
-                    >
-                      <Search className="mr-2 h-4 w-4" />
-                      Search
-                    </Button>
-                  </TooltipTrigger>
-                </Tooltip>
 
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -684,7 +700,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="right">
-                <p>Search</p>
+
               </TooltipContent>
             </Tooltip>
 
